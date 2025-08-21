@@ -12,3 +12,6 @@ mean(x)
 
 ## estimate SD
 sd(x)
+
+## quick coding
+z <- c(1,2,3)
