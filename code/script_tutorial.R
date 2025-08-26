@@ -36,3 +36,5 @@ o
 #data frame
 df0<-data.frame(name= c("Smith","John","Kate","Akira"),height=c(154, 170, 156, 175))
 df0
+
+
