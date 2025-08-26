@@ -74,7 +74,7 @@ select(iris_sub, ends_with("Width"))
 select(iris_sub, -ends_with("Width"))
 
 
-#Add columns
+#From scratch
 
 #mutate()
 
@@ -84,8 +84,13 @@ x_max<-nrow(iris_sub)
 x<-c(1:x_max)
 x_max
 x
-
+#Add as column
 mutate(iris_sub,row_id=x)
+
+#From an existing column
+
+#new column equal to twice 'Sepal.Length'
+mutate(iris_sub,twice_sepal=2 * Sepal.Length)
 
 
 
