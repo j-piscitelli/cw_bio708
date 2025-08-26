@@ -87,8 +87,6 @@ x
 
 mutate(iris_sub,row_id=x)
 
-mutate()
-
 
 
 #Piping
