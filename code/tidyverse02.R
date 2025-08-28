@@ -26,4 +26,6 @@ df_eps<-iris_sub %>%
 
 # Reshape -----------------------------------------------------------------
 
-
+iris_sub %>% 
+  mutate(id = rep(1:3, 3)) %>% # add an ID column
+  select(id, Sepal.Length, Species)
