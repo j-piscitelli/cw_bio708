@@ -92,7 +92,15 @@ mutate(iris_sub,row_id=x)
 #new column equal to twice 'Sepal.Length'
 mutate(iris_sub,twice_sepal=2 * Sepal.Length)
 
-
+#Exercise 1
+iris_pw<-select(iris_sub,c(Petal.Width,Species))
+iris_pw
+#Exercise 2
+iris_petal<-select(iris_sub,starts_with("Petal"))
+iris_petal
+#Exercise 3
+iris_pw_two<-mutate(iris_sub, pw_two_times=2*Petal.Width)
+iris_pw_two
 
 #Piping
 #the slow way--creates superfluous intermediate object (dfsl)
@@ -104,3 +112,65 @@ dfsl_2times
 dftw<-iris_sub %>%
   select(Sepal.Length) %>% 
   mutate(twice=2*Sepal.Length)
+
+#Exercise 1
+iris_pipe<-iris_sub %>% 
+  filter(Species=="setosa") %>% 
+  mutate(pw_two_times=2*Petal.Width)
+iris_pipe
+
+#Grouping with group_by()
+iris_sub %>% 
+  group_by(Species)
+
+#Summarize with summarize()
+iris_sub %>% 
+  group_by(Species) %>% 
+  summarize(mu_sl=mean(Sepal.Length))
+#multiple stats
+iris_sub %>% 
+  group_by(Species) %>% 
+  summarize(mu_sl=mean(Sepal.Length),
+            sum_sl=sum(Sepal.Length))
+
+#Summarize with mutate()
+#Shows original dataframe with new summary column
+#not just a summary table
+iris_sub %>% 
+  group_by(Species) %>% 
+  mutate(mu_sl=mean(Sepal.Length)) %>% 
+  ungroup()
+iris_sub
+
+#Reshape
+#pivot_wider() to reshape a dataframe to a wide format
+iris_w<-iris %>% 
+  mutate(id=rep(1:50,3)) %>% # add an ID column
+  select(id, Sepal.Length, Species) %>% 
+  pivot_wider(id_cols="id",values_from="Sepal.Length",names_from="Species")
+print(iris_w)
+
+#pivot_longer()
+iris_l<-iris_w %>% 
+  pivot_longer(cols=c("setosa","versicolor", "virginica"),
+               names_to="Species",
+               values_to="Sepal.Length")
+iris_l
+
+#Join
+#left_join() to merge dataframes based on shared columns
+#one-to-one
+df1<-tibble(Species=c("A","B","C"),x=c(1,2,3))
+df2<-tibble(Species=c("A","B","C"), x=c(4,5,6))
+left_join(x=df1,y=df2, by="Species")
+#one-to-many
+df6<-tibble(Species=c("A","A","B","C"),
+            x=c(1,1,2,3),
+            z=c("cool","cool","awesome","magical"))
+left_join(x=df1, y=df6, by=c("Species","x"))
+#one-to-missing
+df6<-tibble(Species=c('A','B','C'),
+            x=c(1,2,4),
+            z=c('cool','awesome','magical'))
+left_join(x=df1, y=df6, by = c("Species","x"))
+
