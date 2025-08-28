@@ -70,3 +70,10 @@ df1_2minusB<-left_join(x = df1,
 df2minusB_1<-left_join(x=df2_minus_B,
           y=df1,
           by="Species")
+
+
+# Swirl tidyverse ---------------------------------------------------------
+
+#library(swirl)
+#install_course_github("sysilviakim","swirl-tidy")
+#swirl()
