@@ -15,7 +15,7 @@ v_abc100 <- c(rep("a",20),rep("b",30),rep("c",50))
 
 set.seed(100)
 v_x <- rnorm(100)
-mu_x_plus <- mean(v_x>0)
+mu_x_plus <- mean(v_x[v_x >0])
 
 
 # 4: Create a numeric matrix with the numbers 1 through 9 arranged in 3 rows × 3 columns.  
@@ -25,7 +25,7 @@ m_num <- matrix(data=1:9,nrow=3,ncol=3)
 
 # 5: Create a base R data frame (`data.frame()` function) using `v_x` and `v_abc100`.  
 # Name the columns `"x"` for `v_x` and `"group"` for `v_abc`, and assign it to `df_sample`.
-df_sample <- data.frame("x"=v_x,"group"=v_abc100)
+df_sample <- data.frame(x=v_x,group=v_abc100)
 
 
 # tidyverse ---------------------------------------------------------------
@@ -61,10 +61,10 @@ colnames(mtcars)
 
 # 9: Extract the row names of the `mtcars` dataset using `rownames()`.  
 # Assign the result to `v_make`.
-v_make <- rownames(mtcars)
+v_make <- rownames(df_mtcars)
 
 # 10: Add `v_make` as a new column to `df_mtcars` and name the column `"make"`.
-mutate(df_mtcars,"make"=v_make)
+df_mtcars <- mutate(df_mtcars,make=v_make)
 
 # 11: Filter `df_mtcars` to include only rows where:  
 # - `mpg` is less than 20 AND  
@@ -83,17 +83,12 @@ n_make <- df_mtcars %>%
 
 # 14: Convert the `cyl` column from numeric to factor using `factor()`.  
 # Add it to `df_mtcars` as a new column named `f_cyl` using `mutate()` function.
-mutate(df_mtcars,f_cyl=factor(cyl))
+df_mtcars <- mutate(df_mtcars,f_cyl=factor(cyl))
 
 # 15: Draw a box plot showing car weight (`wt`) for each number of cylinders (`f_cyl`).
 df_mtcars %>% 
-  mutate(f_cyl=factor(cyl)) %>% 
   ggplot(aes(y=wt, x=f_cyl))+
   geom_boxplot()
-## Jonah's note: I have included the step of creating the f_cyl column inside
-# the pipeline because otherwise the code doesn't recognize 'f_cyl',
-# even though I just created 'f_cyl' in Q14. I don't remember this kind of thing
-# being necessary in the past, and I am confused about why it is necessary here.
 
 
 # 16: Calculate the average car weight (`wt`) separately for each number of cylinders (`cyl`).
@@ -137,7 +132,7 @@ df_weight <- tibble(weight = v_w,
 
 df_fish <- left_join(x=df_length,
                      y=df_weight,
-                     by=sp_code)
+                     by="sp_code")
 
 # 20: Draw a scatter plot (point plot) of `length` vs. `weight` from `df_fish`,  
 # coloring the points by species code (`sp_code`).
