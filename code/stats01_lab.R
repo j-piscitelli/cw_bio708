@@ -79,3 +79,6 @@ sd_m <- sqrt(var_m)
 
 (MADmed_w <- MAD_w/median(w))
 (MADmed_m <- MAD_m/median(m))
+
+
+
