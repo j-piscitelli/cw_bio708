@@ -2,8 +2,11 @@
 # Each question is worth 5 points.
 # Call suitable packages as needed.
 
-library(tidyverse)
-
+pacman::p_load(tidyverse,
+               patchwork,
+               janitor,
+               MuMIn,
+               glmmTMB)
 # CO2 dataset -------------------------------------------------------------
 
 ## DATA DESCRIPTION #######################################################
@@ -24,10 +27,15 @@ head(CO2)
 # CO2 dataframe is a base dataframe. Convert this to a class `tibble`
 # then assign to `df_co2`
 
+df_co2 <- as_tibble(CO2)
 
 # Q2
 # Convert column names to lowercase and reassign to `df_co2`
 
+df_co2 <- df_co2 %>%
+  rename(plant = Plant,
+         type = Type,
+         treatment = Treatment)
 
 # Q3
 # Create scatter plots of CO₂ uptake versus ambient CO₂ concentration using `df_co2`.
@@ -36,6 +44,37 @@ head(CO2)
 # - Color the points by treatment.
 # - Create separate panels for each plant type (Quebec vs Mississippi) and combine the plots.
 
+## JP: Creating separate dataframes for the two sites
+df_qc <- df_co2 %>% 
+  filter(type == "Quebec")
+
+df_ms <- df_co2 %>% 
+  filter(type == "Mississippi")
+
+## JP: Plotting
+gg_qc <- df_qc %>% 
+  ggplot() +
+  geom_point(aes(x = conc,
+                 y = uptake,
+                 color = treatment)) +
+  labs(title = "Quebec",
+       x = "CO2 concentration",
+       y = "CO2 assimilation rate") +
+  ylim(0,50) # Making the y-axis the same on both graphs, for ease of comparison
+
+gg_ms <- df_ms %>% 
+  ggplot() +
+  geom_point(aes(x = conc,
+                 y = uptake,
+                 color = treatment)) +
+  labs(title = "Mississippi",
+       x = "CO2 concentration",
+       y = "CO2 assimilation rate") +
+  ylim(0,50) # Making the y-axis the same on both graphs, for ease of comparison
+
+
+gg_qc + gg_ms + guide_area() +
+  plot_layout(guides = "collect")
 
 # Q4
 # The df_co2 dataset contains the following variables:
@@ -52,6 +91,26 @@ head(CO2)
 # 
 # Fit these models separately for each plant origin.
 
+## JP: Models for Quebec
+m_conc_qc <- lm(uptake ~ conc,
+                data = df_qc)
+
+m_treat_qc <- lm(uptake ~ treatment,
+                 data = df_qc)
+
+m_qc <- lm(uptake ~ conc * treatment,
+               data = df_qc)
+
+## JP: Models for Mississippi
+m_conc_ms <- lm(uptake ~ conc,
+           data = df_ms)
+
+m_treat_ms <- lm(uptake ~ treatment,
+                 data = df_ms)
+
+m_ms <- lm(uptake ~ conc * treatment,
+               data = df_ms)
+
 
 # Q5
 # Based on the models fitted in Q4 for Quebec and Mississippi plants,
@@ -61,8 +120,15 @@ head(CO2)
 # Mississippi plants, and use the model results to support your answers.
 
 # ENTER YOUR ANSWER HERE as COMMENT:
-# (no coding required for this question)
 
+## JP: For the plants from Quebec, there was a highly significant correlation between
+## CO2 concentration and assimilation rate (with a p value around .00008), and no
+## connection between treatment and CO2 assimilation rate. For the plants from
+## Mississippi, there was a similar effect of CO2 concentration. When I looked at
+## the effect of treatment on CO2 assimilation rate in Mississippi, it initially
+## appeared highly significant (and negative), but after including the interaction
+## of concentration and treatment that effect became only modestly significant
+## (p = .023).
 
 # BCI data ----------------------------------------------------------------
 
@@ -129,11 +195,23 @@ df_env <- BCI.env %>%
 # Q6
 # Convert column names of `df_env` to lowercase and reassign to `df_env`
 
+df_env <- df_env %>% janitor::clean_names()
 
 # Q7
 # In `df_env`, some environmental variables have no variation between plots
 # (i.e., the same value for all plots). Identify these columns and remove them
 # from the dataframe. Assign the resulting dataframe to `df_env_sub`.
+
+
+## JP: Create duplicate of df_env to edit
+df_env_sub <- df_env
+
+## JP: Remove columns with only one unique value
+for (col in names(df_env_sub)) {
+  if (length(unique(df_env_sub[[col]])) == 1) {
+    df_env_sub <- select(df_env_sub, -col)
+  }
+}
 
 
 # Q8
@@ -144,11 +222,21 @@ df_env <- BCI.env %>%
 # - p: proportion of the most abundant species (n1 / n_sum)
 # Assign the resulting dataframe to `df_n`.
 
+df_n <- df_bci %>% 
+  group_by(plot) %>% 
+  mutate(n_sum = sum(count)) %>% 
+  mutate(n1 = max(count)) %>% 
+  mutate(p = n1/n_sum) %>% 
+  ungroup() %>% 
+  select(c(plot, n_sum, n1, p)) %>% 
+  distinct()
+
 
 # Q9
 # Combine the summary data (`df_n`) with the environmental variables
 # (`df_env_sub`) for each plot. Assign the resulting dataframe to `df_m`.
 
+df_m <- left_join(df_n,df_env_sub)
 
 # Q10
 # Develop a statistical model to explain variation in the proportion of the dominant
@@ -158,3 +246,14 @@ df_env <- BCI.env %>%
 # rather than the goodness of fit, and report which variables are included in 
 # the best predictive model as a comment.
 
+## JP: The proportion of the dominant species is bounded by 0 and 1, but it is
+## continuous, not discrete, so I think I should use a Beta distribution.
+m_p <- glmmTMB(p ~ env_het + stream + habitat,
+               data = df_m,
+               family = "beta_family")
+
+options(na.action = "na.fail")
+m_set <- dredge(m_p, rank = "AIC")
+
+## JP: The best predictive model uses habitat alone, though the model with habitat &
+## environmental heterogeneity is almost as good (with a delta of 0.28)
