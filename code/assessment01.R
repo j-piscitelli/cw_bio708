@@ -17,7 +17,7 @@ v_x <- rnorm(100)
 # Assign it to `m_num`.
 
 # 5: Create a base R data frame (`data.frame()` function) using `v_x` and `v_abc100`.  
-# Name the columns `"x"` for `v_x` and `"group"` for `v_abc`, and assign it to `df_sample`.
+# Name the columns `"x"` for `v_x` and `"group"` for `v_abc100`, and assign it to `df_sample`.
 
 
 # tidyverse ---------------------------------------------------------------
@@ -56,12 +56,13 @@ v_x <- rnorm(100)
 # Assign the result to `df_subset`.
 
 # 12: Count how many car makes meet the above conditions (Q11).
-# Apply `nrow()` to `df_subset`.
+# Apply `nrow()` to `df_subset`. Use ?nrow() for the usage of nrow() function.
 
 # 13: Repeat Q11 and Q12 in a single pipeline (with %>%), and assign the result to `n_make`.
 
 # 14: Convert the `cyl` column from numeric to factor using `factor()`.  
 # Add it to `df_mtcars` as a new column named `f_cyl` using `mutate()` function.
+# Use ?factor() for the usage of factor() function.
 
 # 15: Draw a box plot showing car weight (`wt`) for each number of cylinders (`f_cyl`).
 
@@ -74,23 +75,28 @@ v_x <- rnorm(100)
 # 19: The following script creates two tibbles:  
 # `df_length` (body length) and `df_weight` (body weight),  
 # each with a species code (`sp_code` column).  
-# Combine these two data frames based on `sp_code` and assign the result to `df_fish`.
+# Combine these two data frames based on `sp_code`,
+# and assign the result to `df_fish`.
 
 set.seed(123)
+
 v_l <- runif(150, 60, 150)
 v_w <- rnorm(n = length(v_l),
              mean = 0.1 * v_l^1.5,
              sd = 10)
+v_sp <- sample(c("bhc", "rbs", "gsf"),
+               size = length(v_l),
+               replace = TRUE) %>% 
+  sort()
+
+v_id <- sapply(table(v_sp), function(x) 1:x) %>% 
+  unlist()
 
 df_length <- tibble(length = v_l,
-                    sp_code = sample(c("bhc", "rbs", "gsf"),
-                                     size = length(v_l),
-                                     replace = TRUE))
+                    sp_code = paste0(v_sp, v_id))
 
 df_weight <- tibble(weight = v_w,
-                    sp_code = sample(c("bhc", "rbs", "gsf"),
-                                     size = length(v_l),
-                                     replace = TRUE))
+                    sp_code = paste0(v_sp, v_id))
 
 # 20: Draw a scatter plot (point plot) of `length` vs. `weight` from `df_fish`,  
 # coloring the points by species code (`sp_code`).
