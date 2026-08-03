@@ -3,9 +3,14 @@
 
 # base R ------------------------------------------------------------------
 
-# 1: Create a vector with three elements. Assign it to `v_three`.
+# 1: Create a vector with three elements (either numeric or character, up to you).
+# Assign it to `v_three`.
 
-# 2: Create a vector containing 20 "a", 30 "b", and 50 "c" (total length = 100).  
+# 2: Create a vector object containing 
+# - 20 character elements of "a",
+# - 30 character elements of "b",
+# - 30 character elements of "c",
+# (thus, the vector has a length of 100 elements)
 # Assign it to `v_abc100`.
 
 # 3: The script below creates a vector `v_x` with 100 random numbers from a normal distribution.  
@@ -67,36 +72,21 @@ v_x <- rnorm(100)
 # 15: Draw a box plot showing car weight (`wt`) for each number of cylinders (`f_cyl`).
 
 # 16: Calculate the average car weight (`wt`) separately for each number of cylinders (`cyl`).
+# Hint - `group_by()` and `summarize()` functions.
 
 # 17: Identify the heaviest car make (`wt`) among cars with 6 cylinders (`cyl`).
+# Hint - `filter()` and `arrange()` functions.
 
 # 18: Create a histogram showing the distribution of 1/4 mile time (`qsec`).
 
-# 19: The following script creates two tibbles:  
-# `df_length` (body length) and `df_weight` (body weight),  
-# each with a species code (`sp_code` column).  
-# Combine these two data frames based on `sp_code`,
-# and assign the result to `df_fish`.
+# 19: The following script reads two tibbles:
+# one containing fish length data and the other containing fish weight data.
+# Combine the two data frames by matching the `species` and `individual` columns
+# so that the length and weight measurements for each fish are aligned.
+# Assign the resulting data frame to `df_fish`.
 
-set.seed(123)
-
-v_l <- runif(150, 60, 150)
-v_w <- rnorm(n = length(v_l),
-             mean = 0.1 * v_l^1.5,
-             sd = 10)
-v_sp <- sample(c("bhc", "rbs", "gsf"),
-               size = length(v_l),
-               replace = TRUE) %>% 
-  sort()
-
-v_id <- sapply(table(v_sp), function(x) 1:x) %>% 
-  unlist()
-
-df_length <- tibble(length = v_l,
-                    sp_code = paste0(v_sp, v_id))
-
-df_weight <- tibble(weight = v_w,
-                    sp_code = paste0(v_sp, v_id))
+df_length <- read_csv("data_raw/data_length_assess01.csv")
+df_weight <- read_csv("data_raw/data_weight_assess01.csv")
 
 # 20: Draw a scatter plot (point plot) of `length` vs. `weight` from `df_fish`,  
-# coloring the points by species code (`sp_code`).
+# coloring the points by `species`
