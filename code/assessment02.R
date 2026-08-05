@@ -70,7 +70,6 @@ pnorm(q = 0, mean = 0, sd = 1) # returns 0.5
 
 # Questions:
 # 1. Calculate the probability that 0 < x <= 10 for a normal distribution with mean = 5 and sd = 3.
-#    Hint: Use `qnorm()` function and subtract P(x <= 0) from P(x <= 10).
 
 # 2. Calculate the probability that 0 < x <= 10 for a normal distribution with mean = -5 and sd = 3.
 
@@ -84,7 +83,7 @@ pnorm(q = 0, mean = 0, sd = 1) # returns 0.5
 
 # Questions:
 # 1. Using the `df_iris` dataset, calculate the variance of "Petal.Length" for each species.
-#    (Hint: use `group_by()` and `summarize()` from dplyr.)
+#    Use `group_by()` and `summarize()` from tidyverse to perform this work.
 
 # 2. Perform a t-test comparing "Petal.Length" between "setosa" and "versicolor".
 #    Choose the appropriate `var.equal` option depending on whether the SDs appear equal.
