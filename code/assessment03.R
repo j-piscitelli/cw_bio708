@@ -44,7 +44,7 @@ head(CO2)
 # - treatment: chilled vs nonchilled
 # - type: plant origin (Quebec vs Mississippi)
 # 
-# Develop suitable statistical models to examine:
+# Develop a single statistical model that examines the following effects simultaneously:
 #   
 # - The main effect of ambient CO₂ concentration (conc)
 # - The main effect of treatment
