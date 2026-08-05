@@ -8,7 +8,7 @@
 
 # 2: Create a vector object containing 
 # - 20 character elements of "a",
-# - 30 character elements of "b",
+# - 50 character elements of "b",
 # - 30 character elements of "c",
 # (thus, the vector has a length of 100 elements)
 # Assign it to `v_abc100`.
@@ -85,8 +85,8 @@ v_x <- rnorm(100)
 # so that the length and weight measurements for each fish are aligned.
 # Assign the resulting data frame to `df_fish`.
 
-df_length <- read_csv("data_raw/data_length_assess01.csv")
-df_weight <- read_csv("data_raw/data_weight_assess01.csv")
+df_l <- read_csv("data_raw/data_length_assess01.csv")
+df_w <- read_csv("data_raw/data_weight_assess01.csv")
 
 # 20: Draw a scatter plot (point plot) of `length` vs. `weight` from `df_fish`,  
 # coloring the points by `species`
